@@ -20,31 +20,32 @@ PRE-REQUISITES:
 
 ### TASK 1: FILE IO
 
-+ On a droplet: 
+On a droplet: 
 
-- Image creation using Dockerfile
++ Image creation using Dockerfile
 ```
 sudo docker build -t socat_container .
 ```
 
-- We have two docker containers:
-1. Server container : It runs a command script that outputs current date and time to a file (output.txt)
-```
-sudo docker run -td --name container_1 socat_container
-sudo docker exec -it container_1 bash
-sh server_script.sh > output.txt
-socat tcp-l:9001,reuseaddr,fork system:'cat /output.txt',nofork
-```
++ We have two docker containers:
 
-2. Client container: It is linked with the container and fetches the output.txt using curl command from
-					Server container listening on 9001 (using socat connection)
-```
-sudo docker run -td --link container_1:server --name container_2 socat_container
-sudo docker exec -it container_2 bash
-sudo apt-get install curl
-curl server:9001 > result.txt
-cat result.txt
-```
+	- Server container : It runs a command script that outputs current date and time to a file (output.txt)
+	```
+	sudo docker run -td --name container_1 socat_container
+	sudo docker exec -it container_1 bash
+	sh server_script.sh > output.txt
+	socat tcp-l:9001,reuseaddr,fork system:'cat /output.txt',nofork
+	```
+
+	- Client container: It is linked with the container and fetches the output.txt using curl command from
+					    Server container listening on 9001 (using socat connection)
+	```
+	sudo docker run -td --link container_1:server --name container_2 socat_container
+	sudo docker exec -it container_2 bash
+	sudo apt-get install curl
+	curl server:9001 > result.txt
+	cat result.txt
+	```
 
 Note: The containers are created using Dockerfile, included as a part of the repo in Task1/ folder.
 
@@ -53,28 +54,29 @@ Note: The containers are created using Dockerfile, included as a part of the rep
 ### TASK 2: AMBASSADOR PATTERN
 
 Note: Make sure docker-compose is installed on the droplet hosts.
-	  To install docker-compose:
-      ```
-      curl -L https://github.com/docker/compose/releases/download/1.5.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
-      chmod +x /usr/local/bin/docker-compose
-      ```
+
+To install docker-compose:
+```
+curl -L https://github.com/docker/compose/releases/download/1.5.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+```
 
 + There are two droplet machines – Host 1 and Host 2 to isolate docker hosts.
 
 + Using Docker compose, the following 4 containers are spun up:
-	- Host 1 (Server): 
+	- Host 1 (Server):
 		1) redis : It is the redis server.
 		2) redis_ambassador_server : This container is a linked container to redis.
 	```
 	docker-compose up
 	```
 
-	- Host 2 (Client): 
+	- Host 2 (Client):
 		1) redis_ambassador_client : This container talks to Host1 (Server) over a TCP connection
               						 to perform /set and /get requests from client_cli container 
               						 and redirect it to Host1 redis server.
-		2) client_cli container: This is a linked container to redis_ambassador_client which makes
-								 the /set and /get requests.
+        2) client_cli container : This is a linked container to redis_ambassador_client which makes
+								  the /set and /get requests.
 	```
 	docker-compose up
 	sudo docker run -it --link redis_ambassador_client:redis --name client_cli relateiq/redis-cli
@@ -91,9 +93,9 @@ Note: The containers with their linking and other variables are configured and c
 ### TASK 3: DOCKER DEPLOY
 
 Note: The following command needs to be executed in the beginning to create a local registry:
-	  ```
-	  docker run -d -p 5000:5000 --restart=always --name registry registry:2
-	  ```
+```
+docker run -d -p 5000:5000 --restart=always --name registry registry:2
+```
 
 + An App commits and pushes the code to “blue” and “green” slice created. (from the Deployment
   and Advanced Docker workshop)
@@ -115,13 +117,12 @@ Note: The following command needs to be executed in the beginning to create a lo
 
 Link to App: https://github.com/CSC-DevOps/App
 
-Note: The containers are configured and created using image created using Dockerfile
-      included as a part of the repo in Task3/ folder. 
-
-      The post-receive hooks of both blue and green slice are included as a part of the
+Note:
+	- The containers are configured and created using image created using Dockerfile
+      included as a part of the repo in Task3/ folder.
+    - The post-receive hooks of both blue and green slice are included as a part of the
       repo in Task3/ folder.(in blue_slice/ and green_slice/)
-      
-      For the purposes of demo as shown in the screencast, the server on blue slice listens on 
+    - For the purposes of demo as shown in the screencast, the server on blue slice listens on 
       port 8080 and that on the green slice listens on port 8081 externally.
 
 
