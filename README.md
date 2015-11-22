@@ -65,17 +65,17 @@ chmod +x /usr/local/bin/docker-compose
 
 + Using Docker compose, the following 4 containers are spun up:
 	- Host 1 (Server):
-		1) redis : It is the redis server.
-		2) redis_ambassador_server : This container is a linked container to redis.
+		- redis : It is the redis server.
+		- redis_ambassador_server : This container is a linked container to redis.
 	```
 	docker-compose up
 	```
 
 	- Host 2 (Client):
-		1) redis_ambassador_client : This container talks to Host1 (Server) over a TCP connection
+		- redis_ambassador_client : This container talks to Host1 (Server) over a TCP connection
               						 to perform /set and /get requests from client_cli container 
               						 and redirect it to Host1 redis server.
-        2) client_cli container : This is a linked container to redis_ambassador_client which makes
+    	- client_cli container : This is a linked container to redis_ambassador_client which makes
 								  the /set and /get requests.
 	```
 	docker-compose up
@@ -118,12 +118,14 @@ docker run -d -p 5000:5000 --restart=always --name registry registry:2
 Link to App: https://github.com/CSC-DevOps/App
 
 Note:
-	- The containers are configured and created using image created using Dockerfile
-      included as a part of the repo in Task3/ folder.
-    - The post-receive hooks of both blue and green slice are included as a part of the
-      repo in Task3/ folder.(in blue_slice/ and green_slice/)
-    - For the purposes of demo as shown in the screencast, the server on blue slice listens on 
-      port 8080 and that on the green slice listens on port 8081 externally.
++ The containers are configured and created using image created using Dockerfile
+  included as a part of the repo in Task3/ folder.
+
++ The post-receive hooks of both blue and green slice are included as a part of the
+  repo in Task3/ folder.(in blue_slice/ and green_slice/)
+  
++ For the purposes of demo as shown in the screencast, the server on blue slice listens on 
+  port 8080 and that on the green slice listens on port 8081 externally.
 
 
 
