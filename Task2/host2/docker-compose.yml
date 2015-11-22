@@ -1,0 +1,10 @@
+---
+redis_ambassador_client:
+  container_name: redis_ambassador_client
+  environment:
+    - "REDIS_PORT_6379_TCP=tcp://*.*.*.*:6379"
+  expose:
+    - "6379"
+  image: svendowideit/ambassador
+  ports:
+    - "6379:6379"

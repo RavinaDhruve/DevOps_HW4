@@ -1,0 +1,19 @@
+#!/bin/sh
+
+GIT_WORK_TREE=/root/HW4/deploy/green-www/ git checkout -f
+
+############## Create docker image  ##################
+sudo docker rmi my_image
+sudo docker build -t my_image /root/HW4/deploy/green-www/
+
+############## Pushing to local registry ##################
+sudo docker tag -f my_image localhost:5000/docker_image:latest
+sudo docker push localhost:5000/docker_image:latest
+
+############## Pull, stop and remove if already existing container ##################
+sudo docker pull localhost:5000/docker_image:latest
+sudo docker stop $(sudo docker ps -a -f 'name=green*' -q)
+sudo docker rm $(sudo docker ps -a -f 'name=green*' -q)
+
+sudo docker run -p 8081:8080 -td --name green1 localhost:5000/docker_image:latest
+sudo docker exec -td green1 sh -c "node /src/main.js 8080"
